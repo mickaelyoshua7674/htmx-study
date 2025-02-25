@@ -5,19 +5,19 @@ import (
 	"os"
 )
 
-type contact struct {
+type Contact struct {
 	Id    int `json:"id"`
 	Name  string `json:"name"`
 	Phone int `json:"phone"`
 	Email string `json:"email"`
 }
 
-type Contacts []contact
+type Contacts []Contact
 
 const fileName = "contacts.json"
 
-func NewContact(id int, name string, phone int, email string) contact {
-	return contact{
+func NewContact(id int, name string, phone int, email string) Contact {
+	return Contact{
 		Id:    id,
 		Name:  name,
 		Phone: phone,
@@ -25,20 +25,29 @@ func NewContact(id int, name string, phone int, email string) contact {
 	}
 }
 
-func ReadJSON() (Contacts, error) {
-	var cts Contacts
-	file, err := os.OpenFile(fileName, os.O_RDONLY|os.O_CREATE, 0644)
+func ReadJSON() Contacts {
+	_, err := os.Stat(fileName)
+	if err == os.ErrNotExist {
+		_, err = os.Create(fileName)
+		if err != nil {
+			panic(err)
+		}
+		return nil
+	}
+
+	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_RDONLY, 0644)
 	if err != nil {
-		return cts, err
+		panic(err)
 	}
 	defer file.Close()
 
+	var cts Contacts
 	decoder := json.NewDecoder(file)
 	err = decoder.Decode(&cts)
 	if err != nil {
-		return cts, err
+		panic(err)
 	}
-	return cts, nil
+	return cts
 }
 
 func (cts Contacts) WriteJSON() error {
@@ -54,4 +63,13 @@ func (cts Contacts) WriteJSON() error {
 		return err
 	}
 	return nil
+}
+
+func (cts Contacts) HaveEmail(email string) Contact {
+	for _, c := range cts {
+		if c.Email == email {
+			return c
+		}
+	}
+	return Contact{}
 }
