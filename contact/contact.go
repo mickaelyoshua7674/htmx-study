@@ -8,7 +8,7 @@ import (
 type Contact struct {
 	Id    int `json:"id"`
 	Name  string `json:"name"`
-	Phone int `json:"phone"`
+	Phone string `json:"phone"`
 	Email string `json:"email"`
 }
 
@@ -16,7 +16,7 @@ type Contacts []Contact
 
 const fileName = "contacts.json"
 
-func NewContact(id int, name string, phone int, email string) Contact {
+func NewContact(id int, name, phone, email string) Contact {
 	return Contact{
 		Id:    id,
 		Name:  name,
@@ -48,6 +48,16 @@ func ReadJSON() Contacts {
 		panic(err)
 	}
 	return cts
+}
+
+func (cts Contacts) GetMaxId() int {
+	maxId := 0
+	for _, c := range cts {
+		if c.Id > maxId {
+			maxId = c.Id
+		}
+	}
+	return maxId
 }
 
 func (cts Contacts) WriteJSON() error {

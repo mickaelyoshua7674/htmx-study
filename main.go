@@ -37,5 +37,15 @@ func handlerNewContact(ctx *gin.Context) {
 	ctx.HTML(http.StatusOK, "new-contact", contact.Contact{})
 }
 func handlerCreateNewContact(ctx *gin.Context) {
-
+	name := ctx.Request.FormValue("name")
+	email := ctx.Request.FormValue("email")
+	phone := ctx.Request.FormValue("phone")
+	ct := contact.NewContact(cts.GetMaxId()+1, name, phone, email)
+	cts = append(cts, ct)
+	err := cts.WriteJSON()
+	if err != nil {
+		ctx.HTML(http.StatusInternalServerError, "new-contact", contact.Contact{})
+	} else {
+		ctx.Redirect(http.StatusMovedPermanently, "/contacts")
+	}
 }
