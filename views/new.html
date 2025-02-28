@@ -1,0 +1,13 @@
+{{ block "new-contact" . }}
+<form action="/contacts/new" method="post">
+	<fieldset>
+		<legend>Contact Values</legend>
+		<p>
+			<label for="email">Email</label>
+			<input type="email" name="email" placeholder="Email" value="{{ .Email }}" id="email">
+			<span class="error">{{ .Errors["email"] }}</span>
+		</p>
+	</fieldset>
+</form>
+
+{{ end }}

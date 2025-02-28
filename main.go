@@ -16,18 +16,26 @@ func main() {
 	router.GET("/", func(ctx *gin.Context) {
 		ctx.Redirect(http.StatusMovedPermanently, "/contacts")
 	})
-	router.GET("/contacts")
+	router.GET("/contacts", handlerGetContacts)
+	router.GET("/contacts/new", handlerNewContact)
+	router.POST("/contacts/new", handlerCreateNewContact)
 
 	//router.Run(":8081")
-
-
 }
 
-func GetContacts(ctx *gin.Context) {
+func handlerGetContacts(ctx *gin.Context) {
 	email := ctx.Request.FormValue("email")
 	if email == "" {
+		ctx.HTML(http.StatusOK, "content", cts)
+	} else {
+		ct := cts.HaveEmail(email)
+		ctx.HTML(http.StatusNotFound, "content", ct)
 	}
-	ct := cts.HaveEmail(email)
+}
 
-	ctx.HTML(http.StatusOK, "content", ct)
+func handlerNewContact(ctx *gin.Context) {
+	ctx.HTML(http.StatusOK, "new-contact", contact.Contact{})
+}
+func handlerCreateNewContact(ctx *gin.Context) {
+
 }

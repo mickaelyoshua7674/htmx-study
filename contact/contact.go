@@ -65,11 +65,11 @@ func (cts Contacts) WriteJSON() error {
 	return nil
 }
 
-func (cts Contacts) HaveEmail(email string) Contact {
+func (cts Contacts) HaveEmail(email string) Contacts {
 	for _, c := range cts {
 		if c.Email == email {
-			return c
+			return Contacts{c}
 		}
 	}
-	return Contact{}
+	return Contacts{}
 }
