@@ -6,7 +6,7 @@ import (
 )
 
 type Contact struct {
-	Id    int `json:"id"`
+	Id    int `json:"id,omitempty"`
 	Name  string `json:"name"`
 	Phone string `json:"phone"`
 	Email string `json:"email"`
@@ -17,9 +17,8 @@ type Contacts []Contact
 
 const fileName = "contacts.json"
 
-func NewContact(id int, name, phone, email string, err map[string]error) Contact {
+func NewContact(name, phone, email string, err map[string]error) Contact {
 	return Contact{
-		Id:    id,
 		Name:  name,
 		Phone: phone,
 		Email: email,
