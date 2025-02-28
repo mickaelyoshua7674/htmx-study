@@ -5,17 +5,17 @@
 		<p>
 			<label for="email">Email</label>
 			<input type="email" name="email" placeholder="Email" value="{{ .Email }}" id="email">
-			<span class="error">{{ .Errors["email"] }}</span>
+			<span class="error">{{ .Errors }}</span>
 		</p>
 		<p>
 			<label for="name">Name</label>
 			<input type="text" name="name" placeholder="Name" value="{{ .Name }}" id="name">
-			<span class="error">{{ .Errors["name"] }}</span>
+			<span class="error">{{ .Errors }}</span>
 		</p>
 		<p>
 			<label for="phone">Phone</label>
 			<input type="text" name="phone" placeholder="Phone" value="{{ .Phone }}" id="phone">
-			<span class="error">{{ .Errors["phone"] }}</span>
+			<span class="error">{{ .Errors }}</span>
 		</p>
 	</fieldset>
 

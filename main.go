@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -20,16 +21,17 @@ func main() {
 	router.GET("/contacts/new", handlerNewContact)
 	router.POST("/contacts/new", handlerCreateNewContact)
 
-	//router.Run(":8081")
+	router.Run(":8081")
 }
 
 func handlerGetContacts(ctx *gin.Context) {
+	fmt.Println(cts)
 	email := ctx.Request.FormValue("email")
 	if email == "" {
-		ctx.HTML(http.StatusOK, "content", cts)
+		ctx.HTML(http.StatusOK, "layout", gin.H{"searchEmail":email, "contacts":cts})
 	} else {
 		ct := cts.HaveEmail(email)
-		ctx.HTML(http.StatusNotFound, "content", ct)
+		ctx.HTML(http.StatusOK, "layout", gin.H{"searchEmail":email, "contacts":ct})
 	}
 }
 

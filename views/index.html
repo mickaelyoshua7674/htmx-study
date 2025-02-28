@@ -1,7 +1,7 @@
 {{ block "content" . }}
 <form action="/contacts" method="get" class="tool-bar">
 	<label for="search">Search By Email</label>
-	<input type="search" name="email" id="search">
+	<input type="search" name="email" id="search" value="{{ .searchEmail }}">
 	<input type="submit" value="Search">
 </form>
 
@@ -12,7 +12,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		{{ range .Contacts }}
+		{{ range .contacts }}
 		<tr>
 			<td>{{ .Name }}</td>
 			<td>{{ .Phone }}</td>
