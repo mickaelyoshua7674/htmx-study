@@ -2,22 +2,32 @@ package contact
 
 import (
 	"encoding/json"
+	"errors"
 	"os"
 )
+
+type ContactErrors map[string]error
+func NewContactErrors() ContactErrors {
+	return ContactErrors{
+		"name": errors.New(""),
+		"phone": errors.New(""),
+		"email": errors.New(""),
+	}
+}
 
 type Contact struct {
 	Id    int `json:"id,omitempty"`
 	Name  string `json:"name"`
 	Phone string `json:"phone"`
 	Email string `json:"email"`
-	Errors map[string]error `json:"error"`
+	Errors ContactErrors `json:"error"`
 }
 
 type Contacts []Contact
 
 const fileName = "contacts.json"
 
-func NewContact(name, phone, email string, err map[string]error) Contact {
+func NewContact(name, phone, email string, err ContactErrors) Contact {
 	return Contact{
 		Name:  name,
 		Phone: phone,

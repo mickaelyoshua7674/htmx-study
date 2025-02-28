@@ -9,6 +9,7 @@ import (
 )
 
 var cts = contact.ReadJSON()
+var contactErrors = contact.NewContactErrors()
 
 func main() {
 	router := gin.Default()
@@ -46,7 +47,7 @@ func handlerCreateNewContact(ctx *gin.Context) {
 	cts = append(cts, ct)
 	err := cts.WriteJSON()
 	if err != nil {
-		ctx.HTML(http.StatusInternalServerError, "new-contact", contact.Contact{})
+		ctx.HTML(http.StatusInternalServerError, "new-contact", contact.Contact{Errors: contactErrors})
 	} else {
 		ctx.Redirect(http.StatusMovedPermanently, "/contacts")
 	}
