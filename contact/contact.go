@@ -10,18 +10,20 @@ type Contact struct {
 	Name  string `json:"name"`
 	Phone string `json:"phone"`
 	Email string `json:"email"`
+	Errors map[string]error `json:"error"`
 }
 
 type Contacts []Contact
 
 const fileName = "contacts.json"
 
-func NewContact(id int, name, phone, email string) Contact {
+func NewContact(id int, name, phone, email string, err map[string]error) Contact {
 	return Contact{
 		Id:    id,
 		Name:  name,
 		Phone: phone,
 		Email: email,
+		Errors: err,
 	}
 }
 
