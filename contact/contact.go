@@ -27,8 +27,9 @@ type Contacts []Contact
 
 const fileName = "contacts.json"
 
-func NewContact(name, phone, email string, err ContactErrors) Contact {
+func NewContact(id int, name, phone, email string, err ContactErrors) Contact {
 	return Contact{
+		Id: id,
 		Name:  name,
 		Phone: phone,
 		Email: email,
