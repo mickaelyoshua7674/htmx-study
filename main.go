@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,18 +25,17 @@ func main() {
 }
 
 func handlerGetContacts(ctx *gin.Context) {
-	fmt.Println(cts)
 	email := ctx.Request.FormValue("email")
 	if email == "" {
-		ctx.HTML(http.StatusOK, "layout", gin.H{"searchEmail":email, "contacts":cts})
+		ctx.HTML(http.StatusOK, "index.html", gin.H{"searchEmail":email, "contacts":cts})
 	} else {
 		ct := cts.HaveEmail(email)
-		ctx.HTML(http.StatusOK, "layout", gin.H{"searchEmail":email, "contacts":ct})
+		ctx.HTML(http.StatusOK, "index.html", gin.H{"searchEmail":email, "contacts":ct})
 	}
 }
 
 func handlerNewContact(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "new-contact", contact.Contact{})
+	ctx.HTML(http.StatusOK, "new-contact.html", contact.Contact{})
 }
 func handlerCreateNewContact(ctx *gin.Context) {
 	name := ctx.Request.FormValue("name")
@@ -47,7 +45,7 @@ func handlerCreateNewContact(ctx *gin.Context) {
 	cts = append(cts, ct)
 	err := cts.WriteJSON()
 	if err != nil {
-		ctx.HTML(http.StatusInternalServerError, "new-contact", contact.Contact{Errors: contactErrors})
+		ctx.HTML(http.StatusInternalServerError, "new-contact.html", contact.Contact{Errors: contactErrors})
 	} else {
 		ctx.Redirect(http.StatusMovedPermanently, "/contacts")
 	}
