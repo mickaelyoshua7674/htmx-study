@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -9,8 +8,6 @@ import (
 	"github.com/mickaelyoshua7674/htmx-study/contact"
 )
 
-var cts = contact.ReadJSON()
-var maxId = cts.GetMaxId()
 var contactErrors = contact.NewContactErrors()
 
 func main() {
@@ -32,6 +29,8 @@ func main() {
 }
 
 func handlerGetContacts(ctx *gin.Context) {
+	cts := contact.ReadJSON()
+
 	email := ctx.Request.FormValue("email")
 	if email == "" {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{"searchEmail":email, "contacts":cts})
@@ -46,6 +45,9 @@ func handlerNewContact(ctx *gin.Context) {
 }
 
 func handlerCreateNewContact(ctx *gin.Context) {
+	cts := contact.ReadJSON()
+	maxId := cts.GetMaxId()
+
 	name := ctx.Request.FormValue("name")
 	email := ctx.Request.FormValue("email")
 	phone := ctx.Request.FormValue("phone")
@@ -62,6 +64,8 @@ func handlerCreateNewContact(ctx *gin.Context) {
 }
 
 func handlerShowContact(ctx *gin.Context) {
+	cts := contact.ReadJSON()
+
 	idString := ctx.Param("contact_id")
 	
 	id, err := strconv.Atoi(idString)
@@ -79,6 +83,8 @@ func handlerShowContact(ctx *gin.Context) {
 }
 
 func handlerFormEditContact(ctx *gin.Context) {
+	cts := contact.ReadJSON()
+
 	idString := ctx.Param("contact_id")
 	id, err := strconv.Atoi(idString)
 	if err != nil {
@@ -95,6 +101,8 @@ func handlerFormEditContact(ctx *gin.Context) {
 }
 
 func handlerEditContact(ctx *gin.Context) {
+	cts := contact.ReadJSON()
+
 	name := ctx.Request.FormValue("name")
 	phone := ctx.Request.FormValue("phone")
 	email := ctx.Request.FormValue("email")
@@ -114,9 +122,6 @@ func handlerEditContact(ctx *gin.Context) {
 
 	cts[index].Update(name, phone, email)
 
-	fmt.Println()
-	fmt.Println(cts)
-	fmt.Println()
 	err = cts.WriteJSON()
 	if err != nil {
 		cts[index].Errors["email"] = err
@@ -127,6 +132,8 @@ func handlerEditContact(ctx *gin.Context) {
 }
 
 func handlerDeleteContact(ctx *gin.Context) {
+	cts := contact.ReadJSON()
+
 	idString := ctx.Param("contact_id")
 	id, _ := strconv.Atoi(idString)
 	// No need to verify the id errors because
@@ -134,9 +141,6 @@ func handlerDeleteContact(ctx *gin.Context) {
 
 	cts.DeleteById(id)
 
-	fmt.Println()
-	fmt.Println(cts)
-	fmt.Println()
 	err := cts.WriteJSON()
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Error saving changes")

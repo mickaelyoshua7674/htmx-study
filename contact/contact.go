@@ -3,6 +3,7 @@ package contact
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"slices"
 )
@@ -95,7 +96,10 @@ func (cts *Contacts) DeleteById(id int) int {
 	return index
 }
 
-func (cts Contacts) WriteJSON() error {
+func (cts *Contacts) WriteJSON() error {
+	fmt.Println()
+	fmt.Println(cts, len(*cts), cap(*cts))
+	fmt.Println()
 	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
@@ -103,7 +107,7 @@ func (cts Contacts) WriteJSON() error {
 	defer file.Close()
 
 	encoder := json.NewEncoder(file)
-	err = encoder.Encode(&cts)
+	err = encoder.Encode(cts)
 	if err != nil {
 		return err
 	}
