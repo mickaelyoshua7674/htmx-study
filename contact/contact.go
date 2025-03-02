@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"os"
+	"slices"
 )
 
 type ContactErrors map[string]error
@@ -21,6 +22,12 @@ type Contact struct {
 	Phone string `json:"phone"`
 	Email string `json:"email"`
 	Errors ContactErrors `json:"error"`
+}
+
+func (c *Contact) Update(name, phone, email string) {
+	c.Name = name
+	c.Phone = phone
+	c.Email = email
 }
 
 type Contacts []Contact
@@ -70,6 +77,22 @@ func (cts Contacts) GetMaxId() int {
 		}
 	}
 	return maxId
+}
+
+func (cts Contacts) GetIndexById(id int) int {
+	for i, c := range cts {
+		if c.Id == id {
+			return i
+		}
+	}
+	return -1
+}
+
+func (cts *Contacts) DeleteById(id int) int {
+	index := cts.GetIndexById(id)
+	//*cts = append((*cts)[:index], (*cts)[index+1:]...)
+	*cts = slices.Delete(*cts, index, index+1)
+	return index
 }
 
 func (cts Contacts) WriteJSON() error {

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -23,7 +24,9 @@ func main() {
 	router.GET("/contacts/new", handlerNewContact)
 	router.POST("/contacts/new", handlerCreateNewContact)
 	router.GET("/contacts/:contact_id", handlerShowContact)
-	router.GET("/contacts/:contact_id/edit", handlerEditContact)
+	router.GET("/contacts/:contact_id/edit", handlerFormEditContact)
+	router.POST("/contacts/:contact_id/edit", handlerEditContact)
+	router.POST("/contacts/:contact_id/delete", handlerDeleteContact)
 
 	router.Run(":8081")
 }
@@ -60,6 +63,7 @@ func handlerCreateNewContact(ctx *gin.Context) {
 
 func handlerShowContact(ctx *gin.Context) {
 	idString := ctx.Param("contact_id")
+	
 	id, err := strconv.Atoi(idString)
 	if err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid Id")
@@ -74,7 +78,7 @@ func handlerShowContact(ctx *gin.Context) {
 	ctx.String(http.StatusNotFound, "Id not found")
 }
 
-func handlerEditContact(ctx *gin.Context) {
+func handlerFormEditContact(ctx *gin.Context) {
 	idString := ctx.Param("contact_id")
 	id, err := strconv.Atoi(idString)
 	if err != nil {
@@ -86,5 +90,57 @@ func handlerEditContact(ctx *gin.Context) {
 			ctx.HTML(http.StatusOK, "edit-contact.html", c)
 			return
 		}
+	}
+	ctx.String(http.StatusNotFound, "Id not found")
+}
+
+func handlerEditContact(ctx *gin.Context) {
+	name := ctx.Request.FormValue("name")
+	phone := ctx.Request.FormValue("phone")
+	email := ctx.Request.FormValue("email")
+	
+	idString := ctx.Param("contact_id")
+	requestId, err := strconv.Atoi(idString)
+	if err != nil {
+		ctx.String(http.StatusBadRequest, "Invalid Id")
+		return
+	}
+
+	index := cts.GetIndexById(requestId)
+	if index == -1 {
+		ctx.String(http.StatusNotFound, "Id not found")
+		return
+	}
+
+	cts[index].Update(name, phone, email)
+
+	fmt.Println()
+	fmt.Println(cts)
+	fmt.Println()
+	err = cts.WriteJSON()
+	if err != nil {
+		cts[index].Errors["email"] = err
+		ctx.HTML(http.StatusInternalServerError, "edit-contact.html", cts[index])
+	} else {
+		ctx.Redirect(http.StatusMovedPermanently, "/contacts/"+idString)
+	}
+}
+
+func handlerDeleteContact(ctx *gin.Context) {
+	idString := ctx.Param("contact_id")
+	id, _ := strconv.Atoi(idString)
+	// No need to verify the id errors because
+	// it was already verifyed in the edit handler functions
+
+	cts.DeleteById(id)
+
+	fmt.Println()
+	fmt.Println(cts)
+	fmt.Println()
+	err := cts.WriteJSON()
+	if err != nil {
+		ctx.String(http.StatusInternalServerError, "Error saving changes")
+	} else {
+		ctx.Redirect(http.StatusMovedPermanently, "/contacts")
 	}
 }

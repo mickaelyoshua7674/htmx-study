@@ -1,5 +1,31 @@
 {{ template "header" }}
-		{ block "edit-contact" . }
-
+		{{ block "edit-contact" . }}
+		<form action="/contacts/{{ .Id }}/edit" method="post">
+			<fieldset>
+				<legend>Contact Values</legend>
+				<p>
+					<label for="email">Email</label>
+					<input id="email" type="text" name="email" placeholder="Email" value="{{ .Email }}">
+					<span class="error">{{ .Errors.email }}</span>
+				</p>
+				<p>
+					<label for="name">Name</label>
+					<input id="name" type="text" name="name" placeholder="Name" value="{{ .Name }}">
+					<span class="error"> {{ .Errors.name }}</span>
+				</p>
+				<p>
+					<label for="phone">Phone</label>
+					<input id="phone" type="text" name="phone" placeholder="Phone" value="{{ .Phone }}">
+					<span class="error"> {{ .Errors.phone }}</span>
+				</p>
+				<button>Save</button>
+			</fieldset>
+		</form>
+		<form action="/contacts/{{ .Id }}/delete" method="post">
+			<button>Delete Contact</button>
+		</form>
+		<p>
+			<a href="/contacts/">Back</a>
+		</p>
 		{{ end }}
 {{ template "footer" }}
