@@ -89,6 +89,24 @@ func (cts Contacts) GetIndexById(id int) int {
 	return -1
 }
 
+func (cts Contacts) GetContactById(id int) Contact {
+	for _, c := range cts {
+		if c.Id == id {
+			return c
+		}
+	}
+	return Contact{}
+}
+
+func (cts Contacts) GetIdByEmail(email string) int {
+	for _, c := range cts {
+		if c.Email == email {
+			return c.Id
+		}
+	}
+	return -1
+}
+
 func (cts *Contacts) DeleteById(id int) int {
 	index := cts.GetIndexById(id)
 	//*cts = append((*cts)[:index], (*cts)[index+1:]...)
@@ -112,13 +130,4 @@ func (cts *Contacts) WriteJSON() error {
 		return err
 	}
 	return nil
-}
-
-func (cts Contacts) HaveEmail(email string) Contacts {
-	for _, c := range cts {
-		if c.Email == email {
-			return Contacts{c}
-		}
-	}
-	return Contacts{}
 }

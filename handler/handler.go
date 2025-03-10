@@ -17,8 +17,13 @@ func GetContacts(ctx *gin.Context) {
 	if email == "" {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{"searchEmail": email, "contacts": cts})
 	} else {
-		ct := cts.HaveEmail(email)
-		ctx.HTML(http.StatusOK, "index.html", gin.H{"searchEmail": email, "contacts": ct})
+		id := cts.GetIdByEmail(email)
+		if id == -1 {
+			ctx.String(http.StatusNotFound, "Contact not found")
+		} else {
+			ct := cts.GetContactById(id)
+			ctx.HTML(http.StatusOK, "index.html", gin.H{"searchEmail": email, "contacts": ct})
+		}
 	}
 }
 
@@ -133,5 +138,17 @@ func DeleteContact(ctx *gin.Context) {
 		// Since is needed a GET request to "/contacts" to redirect correctly
 		// will be send the status "See Other".
 		ctx.Redirect(http.StatusSeeOther, "/contacts")
+	}
+}
+
+func ValidateEmail(ctx *gin.Context) {
+	cts := contact.ReadJSON()
+
+	email := ctx.Param("email")
+	id := cts.GetIdByEmail(email)
+	if id == -1 {
+		ctx.String(http.StatusOK, "Valid email")
+	} else {
+		ctx.String(http.StatusBadRequest, "Email already registered")
 	}
 }

@@ -5,7 +5,13 @@
 				<legend>Contact Values</legend>
 				<p>
 					<label for="email">Email</label>
-					<input id="email" type="text" name="email" placeholder="Email" value="{{ .Email }}">
+					<input  id="email"
+							type="text"
+							name="email"
+							placeholder="Email"
+							value="{{ .Email }}"
+							hx-get="/contacts/{{ .Id }}/email"
+							hx-target="next .error">
 					<span class="error">{{ .Errors.email }}</span>
 				</p>
 				<p>
