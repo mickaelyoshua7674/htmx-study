@@ -20,7 +20,7 @@ func main() {
 	router.GET("/contacts/:contact_id", handler.ShowContact)
 	router.GET("/contacts/:contact_id/edit", handler.FormEditContact)
 	router.POST("/contacts/:contact_id/edit", handler.EditContact)
-	router.POST("/contacts/:contact_id/delete", handler.DeleteContact)
+	router.DELETE("/contacts/:contact_id", handler.DeleteContact)
 
 	router.Run(":8081")
 }

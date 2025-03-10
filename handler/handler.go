@@ -23,6 +23,7 @@ func GetContacts(ctx *gin.Context) {
 }
 
 func NewContact(ctx *gin.Context) {
+
 	ctx.HTML(http.StatusOK, "new-contact.html", contact.Contact{})
 }
 
@@ -127,6 +128,10 @@ func DeleteContact(ctx *gin.Context) {
 	if err != nil {
 		ctx.String(http.StatusInternalServerError, "Error saving changes")
 	} else {
-		ctx.Redirect(http.StatusMovedPermanently, "/contacts")
+		// Using "See Other" (303) because by default 301 and 302 will send
+		// the same request method (in this case DELETE) when redirecting.
+		// Since is needed a GET request to "/contacts" to redirect correctly
+		// will be send the status "See Other".
+		ctx.Redirect(http.StatusSeeOther, "/contacts")
 	}
 }
