@@ -21,6 +21,7 @@ func main() {
 	router.GET("/contacts/:contact_id/edit", handler.FormEditContact)
 	router.POST("/contacts/:contact_id/edit", handler.EditContact)
 	router.DELETE("/contacts/:contact_id", handler.DeleteContact)
+	router.GET("/contacts/email/:email", handler.ValidateEmail)
 
 	router.Run(":8081")
 }

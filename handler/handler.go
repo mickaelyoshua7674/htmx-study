@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"fmt"
 	"net/http"
 	"strconv"
 
@@ -145,10 +146,13 @@ func ValidateEmail(ctx *gin.Context) {
 	cts := contact.ReadJSON()
 
 	email := ctx.Param("email")
+	fmt.Println()
+	fmt.Println(email)
+	fmt.Println()
 	id := cts.GetIdByEmail(email)
-	if id == -1 {
-		ctx.String(http.StatusOK, "Valid email")
-	} else {
+	if id != -1 {
 		ctx.String(http.StatusBadRequest, "Email already registered")
+	} else {
+		ctx.Status(http.StatusOK)
 	}
 }

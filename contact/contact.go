@@ -11,9 +11,9 @@ import (
 type ContactErrors map[string]error
 func NewContactErrors() ContactErrors {
 	return ContactErrors{
-		"name": errors.New(""),
-		"phone": errors.New(""),
-		"email": errors.New(""),
+		"name": errors.New("invalid name"),
+		"phone": errors.New("invalid phone"),
+		"email": errors.New("email already registered"),
 	}
 }
 
