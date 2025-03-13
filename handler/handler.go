@@ -1,15 +1,12 @@
 package handler
 
 import (
-	"fmt"
 	"net/http"
 	"strconv"
 
 	"github.com/gin-gonic/gin"
 	"github.com/mickaelyoshua7674/htmx-study/contact"
 )
-
-var contactErrors = contact.NewContactErrors()
 
 func GetContacts(ctx *gin.Context) {
 	cts := contact.ReadJSON()
@@ -29,7 +26,6 @@ func GetContacts(ctx *gin.Context) {
 }
 
 func NewContact(ctx *gin.Context) {
-
 	ctx.HTML(http.StatusOK, "new-contact.html", contact.Contact{})
 }
 
@@ -40,13 +36,13 @@ func CreateNewContact(ctx *gin.Context) {
 	name := ctx.Request.FormValue("name")
 	email := ctx.Request.FormValue("email")
 	phone := ctx.Request.FormValue("phone")
-	ct := contact.NewContact(maxId+1, name, phone, email, nil)
+	ct := contact.NewContact(maxId+1, name, phone, email)
 	maxId++
 
 	cts = append(cts, ct)
 	err := cts.WriteJSON()
 	if err != nil {
-		ctx.HTML(http.StatusInternalServerError, "new-contact.html", contact.Contact{Errors: contactErrors})
+		ctx.HTML(http.StatusInternalServerError, "new-contact.html", contact.Contact{})
 	} else {
 		ctx.Redirect(http.StatusMovedPermanently, "/contacts")
 	}
@@ -80,13 +76,13 @@ func FormEditContact(ctx *gin.Context) {
 		ctx.String(http.StatusBadRequest, "Invalid Id")
 		return
 	}
-	for _, c := range cts {
-		if id == c.Id {
-			ctx.HTML(http.StatusOK, "edit-contact.html", c)
-			return
-		}
+
+	index := cts.GetIndexById(id)
+	if index != -1 {
+		ctx.HTML(http.StatusOK, "edit-contact.html", cts[index])
+	} else {
+		ctx.String(http.StatusNotFound, "Id not found")
 	}
-	ctx.String(http.StatusNotFound, "Id not found")
 }
 
 func EditContact(ctx *gin.Context) {
@@ -113,7 +109,6 @@ func EditContact(ctx *gin.Context) {
 
 	err = cts.WriteJSON()
 	if err != nil {
-		cts[index].Errors["email"] = err
 		ctx.HTML(http.StatusInternalServerError, "edit-contact.html", cts[index])
 	} else {
 		ctx.Redirect(http.StatusMovedPermanently, "/contacts/"+idString)
@@ -145,14 +140,17 @@ func DeleteContact(ctx *gin.Context) {
 func ValidateEmail(ctx *gin.Context) {
 	cts := contact.ReadJSON()
 
-	email := ctx.Param("email")
-	fmt.Println()
-	fmt.Println(email)
-	fmt.Println()
-	id := cts.GetIdByEmail(email)
-	if id != -1 {
-		ctx.String(http.StatusBadRequest, "Email already registered")
+	idString := ctx.Param("contact_id")
+	id, _ := strconv.Atoi(idString)
+	// No need to verify the id errors because
+	// it was already verifyed in the edit handler functions
+	c := cts.GetContactById(id)
+
+	requestEmail := ctx.Request.FormValue("email")
+	searchId := cts.GetIdByEmail(requestEmail)
+	if searchId != -1 && requestEmail != c.Email {
+		ctx.String(http.StatusBadRequest, "Email must be Unique")
 	} else {
-		ctx.Status(http.StatusOK)
+		ctx.String(http.StatusOK, "")
 	}
 }

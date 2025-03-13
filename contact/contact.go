@@ -2,27 +2,15 @@ package contact
 
 import (
 	"encoding/json"
-	"errors"
-	"fmt"
 	"os"
 	"slices"
 )
-
-type ContactErrors map[string]error
-func NewContactErrors() ContactErrors {
-	return ContactErrors{
-		"name": errors.New("invalid name"),
-		"phone": errors.New("invalid phone"),
-		"email": errors.New("email already registered"),
-	}
-}
 
 type Contact struct {
 	Id    int `json:"id,omitempty"`
 	Name  string `json:"name"`
 	Phone string `json:"phone"`
 	Email string `json:"email"`
-	Errors ContactErrors `json:"error"`
 }
 
 func (c *Contact) Update(name, phone, email string) {
@@ -35,13 +23,12 @@ type Contacts []Contact
 
 const fileName = "contacts.json"
 
-func NewContact(id int, name, phone, email string, err ContactErrors) Contact {
+func NewContact(id int, name, phone, email string) Contact {
 	return Contact{
 		Id: id,
 		Name:  name,
 		Phone: phone,
 		Email: email,
-		Errors: err,
 	}
 }
 
@@ -115,9 +102,6 @@ func (cts *Contacts) DeleteById(id int) int {
 }
 
 func (cts *Contacts) WriteJSON() error {
-	fmt.Println()
-	fmt.Println(cts, len(*cts), cap(*cts))
-	fmt.Println()
 	file, err := os.OpenFile(fileName, os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		return err
