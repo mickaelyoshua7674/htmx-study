@@ -8,7 +8,8 @@
 					<input id="email" type="text" name="email" placeholder="Email" value="{{ .Email }}"
 							hx-get="/contacts/{{.Id}}/email"
 							hx-target="next .error"
-							hx-target-4xx="next .error">
+							hx-target-4xx="next .error"
+							hx-trigger="change, keyup delay:200ms changed">
 					<span class="error"></span>
 				</p>
 				<p>
