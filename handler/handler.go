@@ -6,16 +6,19 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/mickaelyoshua7674/htmx-study/contact"
+	"github.com/mickaelyoshua7674/htmx-study/view"
 )
 
 func GetContacts(ctx *gin.Context) {
 	cts := contact.ReadJSON()
+	view.Index(cts)
 
 	email := ctx.Request.FormValue("email")
+	id := cts.GetIdByEmail(email)
+
 	if email == "" {
 		ctx.HTML(http.StatusOK, "index.html", gin.H{"searchEmail": email, "contacts": cts})
 	} else {
-		id := cts.GetIdByEmail(email)
 		if id == -1 {
 			ctx.String(http.StatusNotFound, "Contact not found")
 		} else {

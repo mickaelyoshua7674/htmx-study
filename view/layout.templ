@@ -1,0 +1,47 @@
+package view
+
+import "github.com/mickaelyoshua7674/htmx-study/contact"
+import "strconv"
+
+templ Index(cts contact.Contacts) {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title></title>
+			<meta charset="utf-8">
+			<meta name="viewport" content="width=device-width, initial-scale=1">
+			<script src="https://unpkg.com/htmx.org@2.0.4" integrity="sha384-HGfztofotfshcF7+8n44JQL2oJmowVChPTg48S+jvZoztPfvwD79OC/LTtG6dMp+" crossorigin="anonymous"></script>
+			<script src='https://unpkg.com/htmx.org/dist/ext/response-targets.js'></script>
+		</head>
+			<body hx-boost="true" hx-ext="response-targets">
+				<form action="/contacts" method="get" class="tool-bar">
+					<label for="search">Search By Email</label>
+					<input type="search" name="email" id="search" value="{{ .searchEmail }}">
+					<input type="submit" value="Search">
+				</form>
+
+				<table>
+					<thead>
+						<tr>
+							<th>Name</th> <th>Phone</th> <th>Email</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+						for _, ct := range cts {
+							<td>{ct.Name}</td>
+							<td>{ct.Phone}</td>
+							<td>{ct.Email}</td>
+							<td>
+								{{id := strconv.Itoa(ct.Id)}}
+								<a href={templ.URL("/contacts/" + id + "/edit")}>Edit</a>
+								<a href={templ.URL("/contacts/" + id)}>View</a>
+							</td>
+						}
+						</tr>
+					</tbody>
+				</table>
+				<a href="/contacts/new">Add Contact</a>
+			</body>
+		</html>
+}
