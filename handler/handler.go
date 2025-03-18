@@ -42,24 +42,25 @@ func GetContacts(ctx *gin.Context) {
 	}
 }
 
-func NewContact(ctx *gin.Context) {
-	ctx.HTML(http.StatusOK, "new-contact.html", contact.Contact{})
+func FormNewContact(ctx *gin.Context) {
+	err := Render(ctx, http.StatusOK, view.NewContact(contact.Contact{}))
+	HandleErrorRender(err)
 }
 
 func CreateNewContact(ctx *gin.Context) {
 	cts := contact.ReadJSON()
 	maxId := cts.GetMaxId()
+	maxId++
 
 	name := ctx.Request.FormValue("name")
 	email := ctx.Request.FormValue("email")
 	phone := ctx.Request.FormValue("phone")
 	ct := contact.NewContact(maxId+1, name, phone, email)
-	maxId++
 
 	cts = append(cts, ct)
 	err := cts.WriteJSON()
 	if err != nil {
-		ctx.HTML(http.StatusInternalServerError, "new-contact.html", contact.Contact{})
+		ctx.String(http.StatusInternalServerError, "Error saving contacts: %v", err)
 	} else {
 		ctx.Redirect(http.StatusMovedPermanently, "/contacts")
 	}
@@ -69,19 +70,19 @@ func ShowContact(ctx *gin.Context) {
 	cts := contact.ReadJSON()
 
 	idString := ctx.Param("contact_id")
-
 	id, err := strconv.Atoi(idString)
 	if err != nil {
 		ctx.String(http.StatusBadRequest, "Invalid Id")
 		return
 	}
-	for _, c := range cts {
-		if id == c.Id {
-			ctx.HTML(http.StatusOK, "show-contact.html", c)
-			return
-		}
+
+	ct := cts.GetContactById(id)
+	if ct.Email == "" {
+		ctx.String(http.StatusNotFound, "Id not found")
+	} else {
+		err = Render(ctx, http.StatusOK, view.ShowContact(ct))
+		HandleErrorRender(err)
 	}
-	ctx.String(http.StatusNotFound, "Id not found")
 }
 
 func FormEditContact(ctx *gin.Context) {

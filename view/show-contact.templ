@@ -1,0 +1,20 @@
+package view
+
+import "github.com/mickaelyoshua7674/htmx-study/contact"
+import "strconv"
+
+templ ShowContact(ct contact.Contact) {
+	{{id := strconv.Itoa(ct.Id)}}
+	@Base() {
+	<h1>{ct.Name}</h1>
+	<div>
+		<div>Phone: {ct.Phone}</div>
+		<div>Email: {ct.Email}</div>
+	</div>
+
+	<p>
+		<a href={templ.URL("/contacts/" + id + "/edit")}>Edit</a>
+		<a href={templ.URL("/contacts")}>Back</a>
+	</p>
+	}
+}

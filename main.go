@@ -15,7 +15,7 @@ func main() {
 		ctx.Redirect(http.StatusMovedPermanently, "/contacts")
 	})
 	router.GET("/contacts", handler.GetContacts)
-	router.GET("/contacts/new", handler.NewContact)
+	router.GET("/contacts/new", handler.FormNewContact)
 	router.POST("/contacts/new", handler.CreateNewContact)
 	router.GET("/contacts/:contact_id", handler.ShowContact)
 	router.GET("/contacts/:contact_id/edit", handler.FormEditContact)
