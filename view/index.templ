@@ -1,0 +1,37 @@
+package view
+
+import "github.com/mickaelyoshua7674/htmx-study/contact"
+import "strconv"
+
+templ Index(searchEmail string, cts contact.Contacts) {
+	@Base() {
+	<form action="/contacts" method="get" class="tool-bar">
+		<label for="search">Search By Email</label>
+		<input type="search" name="email" id="search" value={searchEmail}>
+		<input type="submit" value="Search">
+	</form>
+
+	<table>
+		<thead>
+			<tr>
+				<th>Name</th> <th>Phone</th> <th>Email</th>
+			</tr>
+		</thead>
+		<tbody>
+			for _, ct := range cts {
+			<tr>
+				<td>{ct.Name}</td>
+				<td>{ct.Phone}</td>
+				<td>{ct.Email}</td>
+				<td>
+					{{id := strconv.Itoa(ct.Id)}}
+					<a href={templ.URL("/contacts/" + id + "/edit")}>Edit</a>
+					<a href={templ.URL("/contacts/" + id)}>View</a>
+				</td>
+			</tr>
+			}
+		</tbody>
+	</table>
+	<a href="/contacts/new">Add Contact</a>
+	}
+}

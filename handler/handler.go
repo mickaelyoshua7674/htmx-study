@@ -1,29 +1,43 @@
 package handler
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
+	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
 	"github.com/mickaelyoshua7674/htmx-study/contact"
 	"github.com/mickaelyoshua7674/htmx-study/view"
 )
 
+func Render(c *gin.Context, status int, template templ.Component) error {
+	c.Status(status)
+	return template.Render(c.Request.Context(), c.Writer)
+}
+func HandleErrorRender(err error) {
+	if err != nil {
+		log.Fatalf("Could not render :%v", err)
+	}
+}
+
 func GetContacts(ctx *gin.Context) {
 	cts := contact.ReadJSON()
-	view.Index(cts)
 
 	email := ctx.Request.FormValue("email")
 	id := cts.GetIdByEmail(email)
 
 	if email == "" {
-		ctx.HTML(http.StatusOK, "index.html", gin.H{"searchEmail": email, "contacts": cts})
+		err := Render(ctx, http.StatusOK, view.Index(email, cts))
+		HandleErrorRender(err)
 	} else {
 		if id == -1 {
 			ctx.String(http.StatusNotFound, "Contact not found")
 		} else {
 			ct := cts.GetContactById(id)
-			ctx.HTML(http.StatusOK, "index.html", gin.H{"searchEmail": email, "contacts": ct})
+
+			err := Render(ctx, http.StatusOK, view.Index(email, contact.Contacts{ct}))
+			HandleErrorRender(err)
 		}
 	}
 }
@@ -82,7 +96,8 @@ func FormEditContact(ctx *gin.Context) {
 
 	index := cts.GetIndexById(id)
 	if index != -1 {
-		ctx.HTML(http.StatusOK, "edit-contact.html", cts[index])
+		err := Render(ctx, http.StatusOK, view.EditContact(cts[index]))
+		HandleErrorRender(err)
 	} else {
 		ctx.String(http.StatusNotFound, "Id not found")
 	}

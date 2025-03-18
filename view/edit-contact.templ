@@ -1,0 +1,48 @@
+package view
+
+import "github.com/mickaelyoshua7674/htmx-study/contact"
+import "strconv"
+
+templ EditContact(ct contact.Contact) {
+	{{
+		id := strconv.Itoa(ct.Id)
+		hxGetUrl := "/contacts/" + id + "/email"
+		hxDeleteUrl := "/contacts/" + id
+	}}
+	@Base() {
+	<form action={templ.URL("/contacts/" + id + "/edit")} method="post">
+		<fieldset>
+			<legend>Contact Values</legend>
+			<p>
+				<label for="email">Email</label>
+				<input id="email" type="text" name="email" placeholder="Email" value={ct.Email}
+						hx-get={hxGetUrl}
+						hx-target="next .error"
+						hx-target-4xx="next .error"
+						hx-trigger="change, keyup delay:200ms changed">
+				<span class="error"></span>
+			</p>
+			<p>
+				<label for="name">Name</label>
+				<input id="name" type="text" name="name" placeholder="Name" value={ct.Name}>
+				<span class="error"></span>
+			</p>
+			<p>
+				<label for="phone">Phone</label>
+				<input id="phone" type="text" name="phone" placeholder="Phone" value={ct.Phone}>
+				<span class="error"></span>
+			</p>
+			<button>Save</button>
+		</fieldset>
+	</form>
+		<button hx-delete={hxDeleteUrl}
+				hx-target="body"
+				hx-push-url="true"
+				hx-confirm="Are you sure you want to delete this contact?">
+				Delete Contact
+		</button>
+	<p>
+		<a href={templ.URL("/contacts")}>Back</a>
+	</p>
+	}
+}
