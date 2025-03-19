@@ -24,19 +24,31 @@ func HandleErrorRender(err error) {
 func GetContacts(ctx *gin.Context) {
 	cts := contact.ReadJSON()
 
+	var page int
+	var err error
+	strPage := ctx.Request.FormValue("page")
+	if strPage != "" {
+		page, err = strconv.Atoi(strPage)
+		if err != nil || page <= 0 {
+			ctx.String(http.StatusBadRequest, "Invalid page")
+			return
+		}
+	} else {
+		page = 1
+	}
+
 	email := ctx.Request.FormValue("email")
 	id := cts.GetIdByEmail(email)
 
 	if email == "" {
-		err := Render(ctx, http.StatusOK, view.Index(email, cts))
+		err := Render(ctx, http.StatusOK, view.Index(email, cts, page))
 		HandleErrorRender(err)
 	} else {
 		if id == -1 {
 			ctx.String(http.StatusNotFound, "Contact not found")
 		} else {
 			ct := cts.GetContactById(id)
-
-			err := Render(ctx, http.StatusOK, view.Index(email, contact.Contacts{ct}))
+			err := Render(ctx, http.StatusOK, view.Index(email, contact.Contacts{ct}, page))
 			HandleErrorRender(err)
 		}
 	}

@@ -9,7 +9,6 @@ import (
 
 func main() {
 	router := gin.Default()
-	router.LoadHTMLGlob("view/*.html")
 
 	router.GET("/", func(ctx *gin.Context) {
 		ctx.Redirect(http.StatusMovedPermanently, "/contacts")
@@ -20,8 +19,8 @@ func main() {
 	router.GET("/contacts/:contact_id", handler.ShowContact)
 	router.GET("/contacts/:contact_id/edit", handler.FormEditContact)
 	router.POST("/contacts/:contact_id/edit", handler.EditContact)
-	router.DELETE("/contacts/:contact_id", handler.DeleteContact)
 	router.GET("/contacts/:contact_id/email", handler.ValidateEmail)
+	router.DELETE("/contacts/:contact_id", handler.DeleteContact)
 
 	router.Run(":8081")
 }

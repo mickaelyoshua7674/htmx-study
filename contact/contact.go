@@ -6,22 +6,14 @@ import (
 	"slices"
 )
 
+const fileName = "contacts.json"
+
 type Contact struct {
 	Id    int `json:"id,omitempty"`
 	Name  string `json:"name"`
 	Phone string `json:"phone"`
 	Email string `json:"email"`
 }
-
-func (c *Contact) Update(name, phone, email string) {
-	c.Name = name
-	c.Phone = phone
-	c.Email = email
-}
-
-type Contacts []Contact
-
-const fileName = "contacts.json"
 
 func NewContact(id int, name, phone, email string) Contact {
 	return Contact{
@@ -31,6 +23,14 @@ func NewContact(id int, name, phone, email string) Contact {
 		Email: email,
 	}
 }
+
+func (c *Contact) Update(name, phone, email string) {
+	c.Name = name
+	c.Phone = phone
+	c.Email = email
+}
+
+type Contacts []Contact
 
 func ReadJSON() Contacts {
 	_, err := os.Stat(fileName)
@@ -55,6 +55,17 @@ func ReadJSON() Contacts {
 		panic(err)
 	}
 	return cts
+}
+
+func (cts Contacts) GetSetByPage(page int) Contacts {
+	if len(cts) <= 10 {
+		return cts
+	}
+	if len(cts) >= page*10 {
+		return cts[page*10-10:page*10]
+	} else {
+		return cts[page*10-10:]
+	}
 }
 
 func (cts Contacts) GetMaxId() int {

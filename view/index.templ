@@ -3,7 +3,13 @@ package view
 import "github.com/mickaelyoshua7674/htmx-study/contact"
 import "strconv"
 
-templ Index(searchEmail string, cts contact.Contacts) {
+templ Index(searchEmail string, cts contact.Contacts, page int) {
+	{{
+		previousPage := strconv.Itoa(page - 1)
+		nextPage := strconv.Itoa(page + 1)
+		cts = cts.GetSetByPage(page)
+		length := len(cts)
+	}}
 	@Base() {
 	<form action="/contacts" method="get" class="tool-bar">
 		<label for="search">Search By Email</label>
@@ -32,6 +38,18 @@ templ Index(searchEmail string, cts contact.Contacts) {
 			}
 		</tbody>
 	</table>
+
+	<div>
+		<span style="float: right">
+		if page > 1 {
+			<a href={templ.URL("/contacts?page=" + previousPage)}>Previous</a>
+		}
+		if length >= 10 {
+			<a href={templ.URL("/contacts?page=" + nextPage)}>Next</a>
+		}
+		</span>
+	</div>
+
 	<a href="/contacts/new">Add Contact</a>
 	}
 }
