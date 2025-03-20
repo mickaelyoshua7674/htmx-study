@@ -12,7 +12,10 @@ templ Index(searchQuery string, cts contact.Contacts, page int) {
 	@Base() {
 	<form action="/contacts" method="get" class="tool-bar">
 		<label for="search">Search By Email</label>
-		<input type="search" name="query" id="search" value={searchQuery}>
+		<input type="search" name="query" id="search" value={searchQuery}
+			hx-get="/contacts"
+			hx-trigger="search, keyup delay:200ms changed"
+			hx-target="tbody">
 		<input type="submit" value="Search">
 	</form>
 
