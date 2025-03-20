@@ -37,21 +37,10 @@ func GetContacts(ctx *gin.Context) {
 		page = 1
 	}
 
-	email := ctx.Request.FormValue("email")
-	id := cts.GetIdByEmail(email)
-
-	if email == "" {
-		err := Render(ctx, http.StatusOK, view.Index(email, cts, page))
-		HandleErrorRender(err)
-	} else {
-		if id == -1 {
-			ctx.String(http.StatusNotFound, "Contact not found")
-		} else {
-			ct := cts.GetContactById(id)
-			err := Render(ctx, http.StatusOK, view.Index(email, contact.Contacts{ct}, page))
-			HandleErrorRender(err)
-		}
-	}
+	query := ctx.Request.FormValue("query")
+	cts = cts.GetByQuery(query)
+	err = Render(ctx, http.StatusOK, view.Index(query, cts, page))
+	HandleErrorRender(err)
 }
 
 func FormNewContact(ctx *gin.Context) {

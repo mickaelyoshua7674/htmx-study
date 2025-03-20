@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"slices"
+	"strings"
 )
 
 const fileName = "contacts.json"
@@ -103,6 +104,21 @@ func (cts Contacts) GetIdByEmail(email string) int {
 		}
 	}
 	return -1
+}
+
+func (cts Contacts) GetByQuery(query string) Contacts {
+	if query == "" {
+		return cts
+	}
+	var queryCts Contacts
+	for _, ct := range cts {
+		if strings.Contains(ct.Email, query) ||
+		strings.Contains(ct.Name, query) ||
+		strings.Contains(ct.Phone, query) {
+			queryCts = append(queryCts, ct)
+		}
+	}
+	return queryCts
 }
 
 func (cts *Contacts) DeleteById(id int) int {

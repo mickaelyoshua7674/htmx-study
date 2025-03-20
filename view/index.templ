@@ -3,9 +3,8 @@ package view
 import "github.com/mickaelyoshua7674/htmx-study/contact"
 import "strconv"
 
-templ Index(searchEmail string, cts contact.Contacts, page int) {
+templ Index(searchQuery string, cts contact.Contacts, page int) {
 	{{
-		previousPage := strconv.Itoa(page - 1)
 		nextPage := strconv.Itoa(page + 1)
 		cts = cts.GetSetByPage(page)
 		length := len(cts)
@@ -13,7 +12,7 @@ templ Index(searchEmail string, cts contact.Contacts, page int) {
 	@Base() {
 	<form action="/contacts" method="get" class="tool-bar">
 		<label for="search">Search By Email</label>
-		<input type="search" name="email" id="search" value={searchEmail}>
+		<input type="search" name="query" id="search" value={searchQuery}>
 		<input type="submit" value="Search">
 	</form>
 
@@ -36,19 +35,23 @@ templ Index(searchEmail string, cts contact.Contacts, page int) {
 				</td>
 			</tr>
 			}
+			<span style="float: right">
+			if length == 10 {
+				<tr>
+					<td colspan="5" style="text-align: center">
+						<span hx-target="closest tr"
+							hx-trigger="revealed"
+							hx-swap="outerHTML"
+							hx-select="tbody > tr"
+							hx-get={"/contacts?page=" + nextPage}>
+							Loading More...
+						</span>
+					</td>
+				</tr>
+			}
+			</span>
 		</tbody>
 	</table>
-
-	<div>
-		<span style="float: right">
-		if page > 1 {
-			<a href={templ.URL("/contacts?page=" + previousPage)}>Previous</a>
-		}
-		if length >= 10 {
-			<a href={templ.URL("/contacts?page=" + nextPage)}>Next</a>
-		}
-		</span>
-	</div>
 
 	<a href="/contacts/new">Add Contact</a>
 	}
