@@ -9,6 +9,7 @@ import (
 
 func main() {
 	router := gin.Default()
+	router.Static("/static", "./static")
 
 	router.GET("/", func(ctx *gin.Context) {
 		ctx.Redirect(http.StatusMovedPermanently, "/contacts")

@@ -15,8 +15,14 @@ templ Index(searchQuery string, cts contact.Contacts, page int) {
 		<input type="search" name="query" id="search" value={searchQuery}
 			hx-get="/contacts"
 			hx-trigger="search, keyup delay:200ms changed"
-			hx-target="tbody">
-		<input type="submit" value="Search">
+			hx-target="tbody"
+			hx-push-url="true"
+			hx-indicator="#spinner">
+		<input type="submit" value="search">
+		<img id="spinner" class="htmx-indicator"
+		src="/static/img/spinning-circles.svg"
+		alt="Searching..."
+		style="width: 1rem; cursor: pointer;">
 	</form>
 
 	<table>
@@ -26,18 +32,7 @@ templ Index(searchQuery string, cts contact.Contacts, page int) {
 			</tr>
 		</thead>
 		<tbody>
-			for _, ct := range cts {
-			<tr>
-				<td>{ct.Name}</td>
-				<td>{ct.Phone}</td>
-				<td>{ct.Email}</td>
-				<td>
-					{{id := strconv.Itoa(ct.Id)}}
-					<a href={templ.URL("/contacts/" + id + "/edit")}>Edit</a>
-					<a href={templ.URL("/contacts/" + id)}>View</a>
-				</td>
-			</tr>
-			}
+			@IndexTr(cts)
 			<span style="float: right">
 			if length == 10 {
 				<tr>

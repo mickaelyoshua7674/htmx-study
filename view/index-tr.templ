@@ -1,0 +1,19 @@
+package view
+
+import "github.com/mickaelyoshua7674/htmx-study/contact"
+import "strconv"
+
+templ IndexTr(cts contact.Contacts) {
+	for _, ct := range cts {
+	<tr>
+		<td>{ct.Name}</td>
+		<td>{ct.Phone}</td>
+		<td>{ct.Email}</td>
+		<td>
+			{{id := strconv.Itoa(ct.Id)}}
+			<a href={templ.URL("/contacts/" + id + "/edit")}>Edit</a>
+			<a href={templ.URL("/contacts/" + id)}>View</a>
+		</td>
+	</tr>
+	}
+}

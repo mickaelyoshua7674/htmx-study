@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"time"
 
 	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
@@ -22,6 +23,7 @@ func HandleErrorRender(err error) {
 }
 
 func GetContacts(ctx *gin.Context) {
+	time.Sleep(2*time.Second)
 	cts := contact.ReadJSON()
 
 	var page int
@@ -39,8 +41,13 @@ func GetContacts(ctx *gin.Context) {
 
 	query := ctx.Request.FormValue("query")
 	cts = cts.GetByQuery(query)
-	err = Render(ctx, http.StatusOK, view.Index(query, cts, page))
-	HandleErrorRender(err)
+	if ctx.GetHeader("HX-Trigger") == "search" {
+		err = Render(ctx, http.StatusOK, view.IndexTr(cts))
+		HandleErrorRender(err)
+	} else {
+		err = Render(ctx, http.StatusOK, view.Index(query, cts, page))
+		HandleErrorRender(err)
+	}
 }
 
 func FormNewContact(ctx *gin.Context) {
