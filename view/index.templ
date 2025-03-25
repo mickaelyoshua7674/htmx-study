@@ -20,7 +20,7 @@ templ Index(searchQuery string, cts contact.Contacts, page int) {
 			hx-indicator="#spinner">
 		<input type="submit" value="search">
 		<img id="spinner" class="htmx-indicator"
-		src="/static/img/spinning-circles.svg"
+		src="/static/img/spinning-circle.gif"
 		alt="Searching..."
 		style="width: 1rem; cursor: pointer;">
 	</form>
@@ -51,6 +51,13 @@ templ Index(searchQuery string, cts contact.Contacts, page int) {
 		</tbody>
 	</table>
 
-	<a href="/contacts/new">Add Contact</a>
+	<p>
+		<a href="/contacts/new">Add Contact</a>
+		<span hx-get="/contacts/count" hx-trigger="revealed">
+			<img id="spinner" class="htmx-indicator"
+			src="/static/img/spinning-circle.gif"
+			style="width: 1rem; cursor: pointer;">
+		</span>
+	</p>
 	}
 }

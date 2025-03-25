@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"os"
 	"slices"
+	"strconv"
 	"strings"
 )
 
@@ -56,6 +57,10 @@ func ReadJSON() Contacts {
 		panic(err)
 	}
 	return cts
+}
+
+func (cts Contacts) GetCountStr() string {
+	return strconv.Itoa(len(cts))
 }
 
 func (cts Contacts) GetSetByPage(page int) Contacts {

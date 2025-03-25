@@ -50,6 +50,12 @@ func GetContacts(ctx *gin.Context) {
 	}
 }
 
+func GetCount(ctx *gin.Context) {
+	cts := contact.ReadJSON()
+	time.Sleep(2*time.Second)
+	ctx.String(http.StatusOK, cts.GetCountStr() + " total contacts")
+}
+
 func FormNewContact(ctx *gin.Context) {
 	err := Render(ctx, http.StatusOK, view.NewContact(contact.Contact{}))
 	HandleErrorRender(err)
