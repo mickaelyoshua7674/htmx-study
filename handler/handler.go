@@ -9,7 +9,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
 	"github.com/mickaelyoshua7674/htmx-study/contact"
-	"github.com/mickaelyoshua7674/htmx-study/view"
+	"github.com/mickaelyoshua7674/htmx-study/static/view"
 )
 
 func Render(c *gin.Context, status int, template templ.Component) error {
@@ -160,13 +160,15 @@ func DeleteContact(ctx *gin.Context) {
 
 	err := cts.WriteJSON()
 	if err != nil {
-		ctx.String(http.StatusInternalServerError, "Error saving changes")
-	} else {
+		ctx.String(http.StatusInternalServerError, "Error saving changes: %v", err)
+	} else if ctx.GetHeader("HX-Trigger") == "delete-btn" {
 		// Using "See Other" (303) because by default 301 and 302 will send
 		// the same request method (in this case DELETE) when redirecting.
 		// Since is needed a GET request to "/contacts" to redirect correctly
 		// will be send the status "See Other".
 		ctx.Redirect(http.StatusSeeOther, "/contacts")
+	} else {
+		ctx.Status(http.StatusOK)
 	}
 }
 
