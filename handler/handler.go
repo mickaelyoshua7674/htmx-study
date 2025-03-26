@@ -9,7 +9,7 @@ import (
 	"github.com/a-h/templ"
 	"github.com/gin-gonic/gin"
 	"github.com/mickaelyoshua7674/htmx-study/contact"
-	"github.com/mickaelyoshua7674/htmx-study/static/view"
+	"github.com/mickaelyoshua7674/htmx-study/view"
 )
 
 func Render(c *gin.Context, status int, template templ.Component) error {
