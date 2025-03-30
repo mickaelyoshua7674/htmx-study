@@ -7,6 +7,8 @@ import (
 	"github.com/mickaelyoshua7674/htmx-study/handler"
 )
 
+
+
 func main() {
 	router := gin.Default()
 	router.Static("/static", "./static")
